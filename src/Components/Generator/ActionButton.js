@@ -1,6 +1,7 @@
 import preact from 'preact';
 import PropTypes from 'prop-types';
 import { Text, IntlProvider } from 'preact-i18n';
+import MailtoDropdown from '../MailtoDropdown';
 
 export default class ActionButton extends preact.Component {
     render() {
@@ -8,18 +9,7 @@ export default class ActionButton extends preact.Component {
 
         const button =
             this.props.transport_medium === 'email' ? (
-                <a
-                    id="sendmail-button"
-                    className={class_name}
-                    href={this.props.mailto_link}
-                    onClick={e => {
-                        if (!this.props.blob_url) e.preventDefault();
-                        else this.props.onSuccess();
-                    }}>
-                    <Text id="send-email" />
-                    &nbsp;&nbsp;
-                    <span className="icon icon-email" />
-                </a>
+                <MailtoDropdown letter={this.props.letter} onSuccess={this.props.onSuccess} email={this.props.email} />
             ) : (
                 <a
                     id="download-button"
@@ -46,8 +36,9 @@ export default class ActionButton extends preact.Component {
     static get defaultProps() {
         return {
             transport_medium: 'email',
+            email: '',
+            letter: undefined,
             blob_url: undefined,
-            mailto_link: '',
             download_filename: '',
             download_active: false
         };
@@ -55,6 +46,12 @@ export default class ActionButton extends preact.Component {
 
     // Note: This is not currently being checked but will be starting with Preact X.
     static propTypes = {
+        transport_medium: PropTypes.oneOf(['fax', 'email', 'letter', 'custom']),
+        email: PropTypes.string,
+        letter: PropTypes.object,
+        blob_url: PropTypes.string,
+        download_filename: PropTypes.string,
+        download_active: PropTypes.bool,
         onSuccess: PropTypes.func.isRequired
     };
 }
